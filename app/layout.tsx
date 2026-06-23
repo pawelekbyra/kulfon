@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Kulfon Agent',
-  description: 'Prywatny agent developerski z Gemini, GitHubem, Vercel i Julesem.',
+  title: 'Kulfon OS',
+  description: 'Prywatne centrum operacyjne z agentem, narzędziami i approval flow.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
