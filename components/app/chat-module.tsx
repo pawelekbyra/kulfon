@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,7 @@ export function ChatModule({ onBusyChange }: ChatModuleProps) {
 
   const isBusy = status === 'submitted' || status === 'streaming';
 
-  useMemo(() => {
+  useEffect(() => {
     onBusyChange?.(isBusy);
   }, [isBusy, onBusyChange]);
 
