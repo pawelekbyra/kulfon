@@ -5,12 +5,12 @@ Czysty starter prywatnego agenta developerskiego zbudowanego na Next.js, Vercel 
 ## Co już jest
 
 - **Next.js 15** (App Router)
-- **Vercel AI SDK 4**
-- **Gemini 1.5 Flash** (domyślnie)
-- **Warstwa Approval**: Destrukcyjne akcje (np. usuwanie deploymentów) wymagają potwierdzenia w UI.
+- **Vercel AI SDK 4** (Core + React)
+- **Gemini 2.0 Flash** (domyślnie)
+- **Warstwa Approval**: Akcje zapisujące (np. tworzenie issue) wymagają potwierdzenia użytkownika w UI i są bezpiecznie wykonywane przez Server Actions.
 - **Narzędzia GitHub**: Informacje o repo, lista issue, tworzenie issue.
 - **Narzędzia Jules**: Specjalny format issue (`createJulesTaskIssue`) dla Agenta Julesa.
-- **Narzędzia Vercel**: Lista deploymentów, usuwanie deploymentów (wymaga approval).
+- **Narzędzia Vercel**: Lista deploymentów (Vercel jest obecnie w trybie tylko do odczytu dla bezpieczeństwa).
 
 ## Szybki Start
 
@@ -32,7 +32,7 @@ Czysty starter prywatnego agenta developerskiego zbudowanego na Next.js, Vercel 
 - Wejdź na [Google AI Studio](https://aistudio.google.com/).
 - Kliknij **"Get API key"**.
 - Skopiuj klucz do `GOOGLE_GENERATIVE_AI_API_KEY`.
-- (Opcjonalnie) Ustaw `GEMINI_MODEL=gemini-1.5-flash` (lub inny dostępny).
+- (Opcjonalnie) Ustaw `GEMINI_MODEL=gemini-2.0-flash` (lub inny dostępny).
 
 ### 2. GitHub Token
 - Przejdź do [GitHub Personal Access Tokens (fine-grained)](https://github.com/settings/tokens?type=beta).
@@ -61,10 +61,12 @@ Czysty starter prywatnego agenta developerskiego zbudowanego na Next.js, Vercel 
 Po uruchomieniu spróbuj:
 - *"Jakie mamy otwarte issue?"*
 - *"Pokaż ostatnie deploymenty na Vercel."*
-- *"Utwórz issue dla Julesa: dodaj ciemny motyw do interfejsu. Kryteria: toggle w rogu, localStorage."*
-- *"Usuń deployment [ID]"* (powinno pojawić się okno potwierdzenia).
+- *"Utwórz issue dla Julesa: dodaj ciemny motyw do interfejsu. Kryteria: toggle w rogu, localStorage."* (wymaga potwierdzenia w UI).
 
-## Bezpieczeństwo
+## Bezpieczeństwo i Approval Layer
 
-- Wszystkie akcje modyfikujące (poza tworzeniem issue, które jest bezpieczne) powinny być dodawane do listy `TOOLS_REQUIRING_APPROVAL` w `lib/tools.ts`.
+- System posiada bezpieczną warstwę potwierdzeń dla akcji zapisujących.
+- Narzędzia wymagające zgody są definiowane w `lib/approval.ts`.
+- Serwer usuwa funkcję `execute` przed wysłaniem definicji do AI, co wymusza reakcję interfejsu.
+- Po kliknięciu "Potwierdź", klient wywołuje **Server Action** (`lib/actions.ts`), który bezpiecznie wykonuje operację na serwerze (zachowując sekrety w bezpiecznym środowisku).
 - Nie dodawaj sekretów do systemu kontroli wersji.

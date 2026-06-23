@@ -1,6 +1,7 @@
 import { google } from '@ai-sdk/google';
 import { convertToCoreMessages, streamText } from 'ai';
-import { githubTools, TOOLS_REQUIRING_APPROVAL } from '@/lib/tools';
+import { githubTools } from '@/lib/tools';
+import { TOOLS_REQUIRING_APPROVAL } from '@/lib/approval';
 import { SYSTEM_PROMPT } from '@/lib/system-prompt';
 
 export const maxDuration = 60;
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
   );
 
   const result = streamText({
-    model: google(process.env.GEMINI_MODEL ?? 'gemini-1.5-flash'),
+    model: google(process.env.GEMINI_MODEL ?? 'gemini-2.0-flash'),
     system: SYSTEM_PROMPT,
     messages: convertToCoreMessages(messages),
     tools: toolsForServer,

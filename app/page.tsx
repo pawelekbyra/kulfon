@@ -2,11 +2,22 @@
 
 import { useChat } from '@ai-sdk/react';
 import { useMemo, useState } from 'react';
-import { TOOLS_REQUIRING_APPROVAL } from '@/lib/tools';
+import { TOOLS_REQUIRING_APPROVAL } from '@/lib/approval';
+import { executeApprovedTool } from '@/lib/actions';
 
 export default function Home() {
   const [input, setInput] = useState('');
-  const { messages, input: chatInput, setInput: setChatInput, handleSubmit, status, error, addToolResult } = useChat() as any;
+  const {
+    messages,
+    input: chatInput,
+    setInput: setChatInput,
+    handleSubmit,
+    status,
+    error,
+    addToolResult
+  } = useChat({
+    maxSteps: 5,
+  } as any) as any;
 
   const isBusy = status === 'submitted' || status === 'streaming';
 
@@ -71,13 +82,20 @@ export default function Home() {
                             <div className="approval-actions">
                               <p>To działanie wymaga Twojego potwierdzenia.</p>
                               <button
-                                onClick={() => addToolResult({ toolCallId, output: 'Confirmed by user' })}
+                                onClick={async () => {
+                                  try {
+                                    const result = await executeApprovedTool(toolName, toolInvocation.args);
+                                    addToolResult({ toolCallId, result });
+                                  } catch (err: any) {
+                                    addToolResult({ toolCallId, result: { error: err.message } });
+                                  }
+                                }}
                                 className="approve-btn"
                               >
                                 Potwierdź
                               </button>
                               <button
-                                onClick={() => addToolResult({ toolCallId, output: 'Cancelled by user' })}
+                                onClick={() => addToolResult({ toolCallId, result: 'Anulowano przez użytkownika' })}
                                 className="deny-btn"
                               >
                                 Anuluj
@@ -91,7 +109,7 @@ export default function Home() {
                     return (
                       <details key={toolCallId} className="tool-card">
                         <summary>Wynik narzędzia: {toolName}</summary>
-                        <pre>{JSON.stringify('result' in toolInvocation ? toolInvocation.result : toolInvocation.output, null, 2)}</pre>
+                        <pre>{JSON.stringify(toolInvocation.result, null, 2)}</pre>
                       </details>
                     );
                   })}

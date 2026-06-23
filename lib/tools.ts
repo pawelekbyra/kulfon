@@ -3,8 +3,6 @@ import { z } from 'zod';
 import { getGithubRepoConfig, githubRequest } from '@/lib/github';
 import { vercelRequest } from '@/lib/vercel';
 
-export const TOOLS_REQUIRING_APPROVAL = ['deleteVercelDeployment'];
-
 export const githubTools = {
   getRepoInfo: tool({
     description: 'Pobierz podstawowe informacje o skonfigurowanym repozytorium GitHub.',
@@ -82,18 +80,6 @@ export const githubTools = {
       }
 
       return vercelRequest(`/v6/deployments?${params.toString()}`);
-    },
-  }),
-
-  deleteVercelDeployment: tool({
-    description: 'USUWANIE deploymentu z Vercel. Wymaga potwierdzenia.',
-    parameters: z.object({
-      deploymentId: z.string().describe('ID deploymentu do usunięcia'),
-    }),
-    execute: async ({ deploymentId }) => {
-      return vercelRequest(`/v13/deployments/${deploymentId}`, {
-        method: 'DELETE',
-      });
     },
   }),
 };
