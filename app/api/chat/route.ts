@@ -6,6 +6,8 @@ import { SYSTEM_PROMPT } from '@/lib/system-prompt';
 
 export const maxDuration = 60;
 
+const toolsRequiringApproval = TOOLS_REQUIRING_APPROVAL as readonly string[];
+
 export async function POST(req: Request) {
   try {
     console.log('[api/chat] env check', {
@@ -24,7 +26,7 @@ export async function POST(req: Request) {
     // This forces the AI SDK to pause and wait for client-side tool confirmation.
     const toolsForServer = Object.fromEntries(
       Object.entries(githubTools).map(([name, tool]) => {
-        if (TOOLS_REQUIRING_APPROVAL.includes(name)) {
+        if (toolsRequiringApproval.includes(name)) {
           const { execute, ...rest } = tool as any;
           return [name, rest];
         }
