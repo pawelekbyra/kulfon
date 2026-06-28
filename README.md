@@ -4,6 +4,8 @@
 
 Na obecnym etapie Bolek jest prosty celowo. Ma przede wszystkim działać przez **Telegram**, korzystać z taniej/darmowej infrastruktury **Cloudflare** i mieć pierwsze praktyczne konektory: **GitHub** oraz **Vercel**. To nie jest jeszcze system z pełną autonomią, wektoryzacją, własnym LLM, sandboxem, browser automation i armią agentów. Te elementy są częścią dalszej wizji, ale nie powinny być dodawane przedwcześnie.
 
+Od początku Bolek powinien jednak myśleć jak agent, który **rozpoznaje własne ograniczenia**. Jeśli nie potrafi wykonać zadania, nie powinien udawać, że potrafi. Powinien powiedzieć, czego mu brakuje, zaproponować obejście, zapisać brak jako potencjalny upgrade i — w późniejszych etapach — samodzielnie przygotować issue, branch albo Pull Request z poprawką.
+
 To repozytorium jest rozwijane również przez **agentów kodowania AI**. README jest więc nie tylko instrukcją dla ludzi, ale też kontraktem projektowym dla kolejnych agentów: co budujemy, w jakiej kolejności i czego nie należy komplikować zbyt wcześnie.
 
 ---
@@ -15,6 +17,95 @@ To repozytorium jest rozwijane również przez **agentów kodowania AI**. README
 Bolek ma rosnąć etapami. Nie chodzi o to, żeby od razu wrzucić wszystkie modne technologie. Chodzi o to, żeby każda kolejna warstwa miała sens, była potrzebna i pasowała do architektury.
 
 Jeżeli jesteś agentem kodowania i czytasz ten plik: **nie przebudowuj projektu od razu pod docelowy system**. Najpierw respektuj aktualny etap.
+
+Jeżeli zadanie wymaga funkcji, której Bolek jeszcze nie ma, właściwa reakcja to:
+
+1. rozpoznać brak,
+2. powiedzieć użytkownikowi, czego brakuje,
+3. zaproponować najprostsze obejście,
+4. zaproponować upgrade kodu,
+5. zapisać ten brak do późniejszej implementacji,
+6. dopiero w późniejszych etapach samodzielnie przygotować zmianę w repo.
+
+---
+
+## Self-improvement loop: Bolek ma rozumieć, czego mu brakuje
+
+Bolek od początku powinien być projektowany tak, żeby umiał zauważyć różnicę między:
+
+- tym, co już potrafi,
+- tym, co potrafi częściowo,
+- tym, czego jeszcze nie potrafi,
+- tym, co jest zaplanowane na przyszłość.
+
+To jest kluczowa różnica między chatbotem a agentem.
+
+Chatbot odpowiada:
+
+```text
+Nie umiem tego zrobić.
+```
+
+Bolek powinien odpowiadać:
+
+```text
+Nie umiem jeszcze zrobić tego w pełni, bo brakuje mi modułu X.
+Mogę teraz zrobić obejście Y.
+Żeby robić to dobrze, trzeba dodać Z.
+Mogę zapisać to jako proponowany upgrade albo przygotować plan implementacji.
+```
+
+Docelowo Bolek powinien działać w pętli:
+
+```text
+zadanie użytkownika
+    ↓
+sprawdzenie aktualnych capabilities
+    ↓
+jeśli capability istnieje → wykonaj zadanie
+    ↓
+jeśli capability nie istnieje → wykryj lukę
+    ↓
+zaproponuj obejście
+    ↓
+zaproponuj upgrade
+    ↓
+zapisz capability gap
+    ↓
+w późniejszym etapie: utwórz issue / branch / Pull Request
+    ↓
+po testach i zgodzie użytkownika: wdrożenie
+```
+
+Na obecnym etapie Bolek nie musi jeszcze sam modyfikować swojego kodu. Powinien jednak od początku być prowadzony tak, żeby **myślał w kategoriach własnych możliwości i braków**.
+
+Minimalny kierunek implementacji tej idei:
+
+- rejestr capabilities: co Bolek umie teraz,
+- oznaczenie statusu capability: `implemented`, `partial`, `planned`, `future`,
+- rejestr braków: czego użytkownik chciał, a czego Bolek nie potrafił,
+- narzędzie do zapisania capability gap,
+- narzędzie do listowania braków,
+- narzędzie do proponowania następnego upgrade'u,
+- prompt systemowy mówiący: nie udawaj brakujących funkcji, proponuj upgrade,
+- później: generowanie issue,
+- później: generowanie branchy i PR,
+- jeszcze później: testy, sandbox i półautonomiczne self-upgrade.
+
+Przykład:
+
+```text
+Użytkownik: monitoruj mi deploymenty i pisz, jak coś padnie.
+
+Bolek:
+- umiem sprawdzić Vercel ręcznie,
+- nie mam jeszcze cyklicznego monitoringu,
+- nie mam tabeli monitorowanych projektów,
+- nie mam workflow alertów,
+- proponowany upgrade: moduł deployment monitoring.
+```
+
+To zachowanie powinno być częścią osobowości i architektury Bolka od początku, nawet zanim powstanie pełna automatyzacja.
 
 ---
 
@@ -33,7 +124,8 @@ Priorytetem tego etapu jest:
 - dostęp do Vercela,
 - prosta i czytelna architektura,
 - łatwy deploy,
-- niski koszt utrzymania.
+- niski koszt utrzymania,
+- podstawowe rozpoznawanie brakujących możliwości i proponowanie upgrade'ów.
 
 Na tym etapie Bolek ma przede wszystkim **gadać przez Telegrama** i wykonywać pierwsze użyteczne akcje przez GitHub/Vercel. To jest wersja fundamentu, a nie finalny Terminator.
 
@@ -51,7 +143,8 @@ Na obecnym etapie nie należy na siłę dodawać:
 - browser automation,
 - sandboxa do wykonywania kodu,
 - pełnego MCP jako obowiązkowego rdzenia,
-- dużej architektury mikroserwisowej.
+- dużej architektury mikroserwisowej,
+- samodzielnego wdrażania zmian bez testów i zgody użytkownika.
 
 Te elementy są ważne, ale później. Teraz najważniejsze jest to, żeby Bolek był mały, zrozumiały, stabilny i łatwy do rozwijania przez ludzi oraz agentów.
 
@@ -65,6 +158,8 @@ Nie chodzi o kolejnego chatbota. Chodzi o agenta, który z czasem będzie potraf
 
 - rozumieć długoterminowy kontekst użytkownika,
 - pamiętać projekty, decyzje i wcześniejsze rozmowy,
+- rozpoznawać własne ograniczenia,
+- proponować ulepszenia własnego kodu,
 - pracować z repozytoriami kodu,
 - analizować błędy,
 - pisać kod,
@@ -80,7 +175,7 @@ Nie chodzi o kolejnego chatbota. Chodzi o agenta, który z czasem będzie potraf
 - pytać o zgodę przed ryzykownymi akcjami,
 - z czasem działać coraz bardziej autonomicznie.
 
-W skrócie: teraz prosty bot, potem agent roboczy, docelowo prywatny cyfrowy Terminator do pracy z kodem, wiedzą i infrastrukturą. Terminator w sensie metafory: skuteczny, wytrwały, pamiętający kontekst i wykonujący zadania do końca — nie zabawka i nie przypadkowy chatbot.
+W skrócie: teraz prosty bot, potem agent roboczy, docelowo prywatny cyfrowy Terminator do pracy z kodem, wiedzą i infrastrukturą. Terminator w sensie metafory: skuteczny, wytrwały, pamiętający kontekst, znający własne ograniczenia i wykonujący zadania do końca — nie zabawka i nie przypadkowy chatbot.
 
 ---
 
@@ -96,7 +191,10 @@ Agent Gateway
 auth, rate limit, uprawnienia, tryb pracy
         ↓
 Agent Runtime
-sesja, stan zadania, pamięć robocza, approval, historia decyzji
+sesja, stan zadania, pamięć robocza, capabilities, approval, historia decyzji
+        ↓
+Capability Engine
+co umiem, czego nie umiem, czego brakuje, jaki upgrade zaproponować
         ↓
 Planner
 dzielenie zadań na kroki, wybór narzędzi, ocena ryzyka
@@ -111,7 +209,7 @@ Execution Layer
 Queues, Workflows, Durable Objects, sandbox, CI/CD
         ↓
 Memory Layer
-D1, KV, R2, Vectorize, RAG, project memory
+D1, KV, R2, Vectorize, RAG, project memory, capability gaps
         ↓
 Observability
 logi, koszty, trace, błędy, retry, audyt decyzji
@@ -136,7 +234,8 @@ Cel:
 - Vercel connector,
 - prosta pamięć,
 - prosty system narzędzi,
-- prosty deploy.
+- prosty deploy,
+- zalążek myślenia o brakujących możliwościach.
 
 W tym etapie nie optymalizujemy pod wielką skalę. Kod ma być możliwie prosty.
 
@@ -156,6 +255,8 @@ Do zrobienia:
 - bezpieczne sekrety,
 - logowanie zdarzeń,
 - tryby pracy agenta: manualny, potwierdzany, autonomiczny,
+- podstawowy rejestr capabilities,
+- podstawowe wykrywanie capability gaps,
 - dokumentacja dla ludzi i agentów kodowania.
 
 Dopiero po tym etapie warto poważniej rozbudowywać pamięć i workflow.
@@ -180,6 +281,25 @@ Na tym etapie nadal można obyć się bez pełnego RAG i wektorów. Jeżeli dany
 
 ---
 
+### Etap 2.5 — Świadomość własnych możliwości
+
+Cel: Bolek zaczyna rozumieć, czego mu brakuje, zanim zacznie sam zmieniać kod.
+
+Zakres:
+
+- lista aktualnych capabilities,
+- status każdej capability: `implemented`, `partial`, `planned`, `future`,
+- tabela lub plik `capability_gaps`,
+- zapisywanie próśb użytkownika, których Bolek nie umiał spełnić,
+- komenda typu: `czego ci brakuje?`,
+- komenda typu: `zaproponuj następny upgrade`,
+- generowanie planów implementacji,
+- tworzenie issue jako pierwszy bezpieczny krok self-upgrade.
+
+Na tym etapie Bolek nadal nie powinien samodzielnie commitować zmian bez zgody. Ma rozpoznawać braki, proponować rozwiązania i przygotowywać plan.
+
+---
+
 ### Etap 3 — Więcej konektorów
 
 Cel: Bolek zaczyna działać z realnymi usługami.
@@ -200,6 +320,25 @@ Każdy konektor powinien być osobnym modułem. Nie mieszamy logiki konektorów 
 
 ---
 
+### Etap 3.5 — Self-upgrade planner
+
+Cel: Bolek potrafi przełożyć wykryty brak na konkretną zmianę w repo.
+
+Zakres:
+
+- analiza README i roadmapy,
+- analiza własnej struktury projektu,
+- wskazanie plików, które trzeba zmienić,
+- proponowanie migracji D1, jeśli potrzebne,
+- proponowanie nowego narzędzia w `src/tools/`,
+- przygotowanie checklisty implementacji,
+- tworzenie issue,
+- później tworzenie branchy i Pull Requestów.
+
+Ten etap jest mostem między „wiem, czego mi brakuje” a „umiem przygotować upgrade”.
+
+---
+
 ### Etap 4 — Pamięć semantyczna i RAG
 
 Cel: Bolek potrafi szukać po własnej wiedzy.
@@ -214,7 +353,7 @@ Dopiero gdy pojawi się wystarczająco dużo danych, dokumentów, repozytoriów 
 - wyszukiwanie semantyczne,
 - RAG oparty o projekty i historię użytkownika.
 
-Ważne: nie dodawać wektoryzacji tylko dlatego, że brzmi profesjonalnie. Dodać wtedy, gdy Bolek ma już co indeksować.
+Ważne: nie dodawać wektoryzacji tylko dlatego, że brzmi profesjonalnie. Dodać wtedy, gdy Bolek ma już co indeksować. Jeśli jednak Bolek ma rozumieć własne repo i historię decyzji, mały Semantic Memory MVP może zostać wprowadzony wcześniej jako ograniczona wersja tej warstwy.
 
 ---
 
@@ -369,6 +508,12 @@ Jeżeli jesteś agentem AI modyfikującym to repozytorium, trzymaj się tych zas
 8. **Projekt ma być czytelny dla następnego agenta.**
    Kod, nazwy plików, migracje i dokumentacja mają pomagać kolejnym agentom szybko zrozumieć system.
 
+9. **Wykrywaj capability gaps.**
+   Jeśli użytkownik chce czegoś, czego Bolek nie umie, nie kończ na odmowie. Zapisz brak, opisz obejście i zaproponuj upgrade.
+
+10. **Self-upgrade ma być bezpieczny.**
+    Najpierw plan albo issue, potem branch/PR, potem testy, potem zgoda użytkownika. Nigdy odwrotnie.
+
 ---
 
 ## Jak to działa teraz
@@ -382,6 +527,8 @@ Ty → Telegram → Cloudflare Worker → Orchestrator → AI → Tools → D1/K
 ```
 
 Piszesz do Bolka na Telegramie. Worker odbiera wiadomość, przekazuje ją do orchestratora, model AI pomaga zinterpretować intencję, a system narzędzi może wykonać prostą akcję, np. związaną z GitHubem albo Vercel.
+
+Jeśli Bolek nie ma narzędzia potrzebnego do wykonania zadania, powinien powiedzieć to wprost i zaproponować następny krok: obejście, plan techniczny, issue albo przyszły upgrade.
 
 ---
 
@@ -496,6 +643,22 @@ Przykłady:
 "pomóż mi z repo"
 ```
 
+### Rozpoznawanie braków
+
+Już od początku Bolek powinien uczyć się odpowiadać w ten sposób:
+
+```text
+"Nie mam jeszcze takiego narzędzia. Mogę zrobić X ręcznie, a docelowo trzeba dodać moduł Y. Chcesz, żebym zapisał to jako upgrade?"
+```
+
+Przykłady:
+
+```text
+"czego ci brakuje?"
+"zaproponuj następny upgrade"
+"zapisz brak: automatyczny monitoring deploymentów"
+```
+
 ### GitHub
 
 Jeśli skonfigurowano `GITHUB_TOKEN`, Bolek może dostać pierwsze możliwości pracy z GitHubem.
@@ -532,11 +695,13 @@ src/
   telegram.ts           # obsługa Telegrama
   orchestrator.ts       # główny przepływ agenta
   memory.ts             # prosta pamięć / D1
+  capabilities.ts       # rejestr tego, co Bolek umie i czego mu brakuje
   env.ts                # typy środowiska
   tools/
     index.ts            # rejestr narzędzi
     github.ts           # GitHub connector
     vercel.ts           # Vercel connector
+    capability-gaps.ts  # narzędzia do zapisywania i listowania braków
   db/migrations/        # migracje D1
 
 web/                    # opcjonalny interfejs webowy, jeśli jest rozwijany
@@ -557,8 +722,9 @@ Zasada:
 1. Dodaj osobny plik narzędzia.
 2. Opisz nazwę, parametry i ryzyko akcji.
 3. Zarejestruj narzędzie w centralnym rejestrze.
-4. Jeżeli potrzeba danych trwałych, dodaj migrację.
-5. Zaktualizuj README, jeśli funkcja zmienia realny etap projektu.
+4. Zaktualizuj rejestr capabilities.
+5. Jeżeli potrzeba danych trwałych, dodaj migrację.
+6. Zaktualizuj README, jeśli funkcja zmienia realny etap projektu.
 
 Nie dopisuj dużej logiki bezpośrednio do głównego Workera, jeśli może być osobnym narzędziem.
 
@@ -570,13 +736,15 @@ Bolek odniesie sukces, jeśli będzie rozwijał się stopniowo:
 
 1. Najpierw odpowiada na Telegramie.
 2. Potem korzysta z GitHuba i Vercela.
-3. Potem pamięta kontekst użytkownika i projektów.
-4. Potem wykonuje coraz więcej narzędzi.
-5. Potem planuje zadania.
-6. Potem prowadzi workflow do końca.
-7. Potem działa z kodem, testami i deploymentem.
-8. Potem korzysta z wielu modeli i agentów.
-9. Potem dostaje własną pamięć semantyczną, sandbox i automatyzację przeglądarki.
-10. Na końcu staje się osobistym AI Operating System.
+3. Potem rozumie, czego jeszcze nie umie, i proponuje upgrade'y.
+4. Potem pamięta kontekst użytkownika i projektów.
+5. Potem wykonuje coraz więcej narzędzi.
+6. Potem planuje zadania.
+7. Potem prowadzi workflow do końca.
+8. Potem działa z kodem, testami i deploymentem.
+9. Potem sam przygotowuje issue, branch i Pull Request dla własnych ulepszeń.
+10. Potem korzysta z wielu modeli i agentów.
+11. Potem dostaje własną pamięć semantyczną, sandbox i automatyzację przeglądarki.
+12. Na końcu staje się osobistym AI Operating System.
 
 To repozytorium jest początkiem tej drogi.
