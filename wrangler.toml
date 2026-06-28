@@ -9,11 +9,11 @@ binding = "AI"
 [[d1_databases]]
 binding = "DB"
 database_name = "bolek-memory"
-database_id = "REPLACE_WITH_YOUR_D1_ID"
+database_id = "1f8cdeb5-6f31-4027-8dda-d1a4d6ab5a26"
 
 [[kv_namespaces]]
 binding = "KV"
-id = "REPLACE_WITH_YOUR_KV_ID"
+id = "8683744b08e3472ca144d7fb3b646a1c"
 
 [vars]
 AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
