@@ -16,7 +16,7 @@ app.post('/webhook/:secret', async (c) => {
     return c.text('Unauthorized', 401)
   }
   const update = await c.req.json()
-  c.executionCtx.waitUntil(handleUpdate(update, c.env))
+  await handleUpdate(update, c.env)
   return c.text('ok')
 })
 
