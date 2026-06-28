@@ -24,13 +24,7 @@ type AIResponse = {
 
 async function runAI(env: Env, messages: AIMessage[]): Promise<AIResponse> {
   const ai = env.AI as Ai
-  return (await (ai.run as Function)(env.AI_MODEL, {
-    messages,
-    tools: tools.map((t) => ({
-      type: 'function',
-      function: { name: t.name, description: t.description, parameters: t.parameters },
-    })),
-  })) as AIResponse
+  return (await (ai.run as Function)(env.AI_MODEL, { messages })) as AIResponse
 }
 
 async function buildMessages(
