@@ -1,49 +1,420 @@
 # AGENT BOLEK
 
-Osobisty asystent AI. Działa przez Telegram i przeglądarkę. Pamięta wszystko. Zarządza kodem, projektami i życiem. Rośnie bez końca.
+**Bolek AI** to start osobistego **AI Operating System** — agenta, który ma z czasem stać się centralnym interfejsem do pracy z kodem, wiedzą, infrastrukturą, usługami i codziennymi zadaniami.
+
+Na obecnym etapie Bolek jest prosty celowo. Ma przede wszystkim działać przez **Telegram**, korzystać z taniej/darmowej infrastruktury **Cloudflare** i mieć pierwsze praktyczne konektory: **GitHub** oraz **Vercel**. To nie jest jeszcze system z pełną autonomią, wektoryzacją, własnym LLM, sandboxem, browser automation i armią agentów. Te elementy są częścią dalszej wizji, ale nie powinny być dodawane przedwcześnie.
+
+To repozytorium jest rozwijane również przez **agentów kodowania AI**. README jest więc nie tylko instrukcją dla ludzi, ale też kontraktem projektowym dla kolejnych agentów: co budujemy, w jakiej kolejności i czego nie należy komplikować zbyt wcześnie.
 
 ---
 
-## Jak to działa
+## Najważniejsza zasada
 
-```
-Ty (Telegram lub web) → Cloudflare Worker → AI (llama) → Narzędzia → Baza D1
+**Najpierw fundament. Potem narzędzia. Potem pamięć. Potem workflow. Potem autonomia.**
+
+Bolek ma rosnąć etapami. Nie chodzi o to, żeby od razu wrzucić wszystkie modne technologie. Chodzi o to, żeby każda kolejna warstwa miała sens, była potrzebna i pasowała do architektury.
+
+Jeżeli jesteś agentem kodowania i czytasz ten plik: **nie przebudowuj projektu od razu pod docelowy system**. Najpierw respektuj aktualny etap.
+
+---
+
+## Aktualny etap: prosty agent Telegram + pierwsze konektory
+
+Obecnie Bolek jest na etapie startowym.
+
+Priorytetem tego etapu jest:
+
+- działający bot Telegrama,
+- prosty Cloudflare Worker,
+- podstawowe połączenie z modelem AI,
+- minimalny system narzędzi,
+- podstawowa pamięć w D1/KV,
+- dostęp do GitHuba,
+- dostęp do Vercela,
+- prosta i czytelna architektura,
+- łatwy deploy,
+- niski koszt utrzymania.
+
+Na tym etapie Bolek ma przede wszystkim **gadać przez Telegrama** i wykonywać pierwsze użyteczne akcje przez GitHub/Vercel. To jest wersja fundamentu, a nie finalny Terminator.
+
+### Czego NIE dodawać jeszcze bez wyraźnej potrzeby
+
+Na obecnym etapie nie należy na siłę dodawać:
+
+- pełnej wektoryzacji i RAG,
+- własnego LLM,
+- fine-tuningu,
+- serwerów GPU,
+- Kubernetes,
+- złożonego systemu wielu agentów,
+- rozbudowanego workflow engine,
+- browser automation,
+- sandboxa do wykonywania kodu,
+- pełnego MCP jako obowiązkowego rdzenia,
+- dużej architektury mikroserwisowej.
+
+Te elementy są ważne, ale później. Teraz najważniejsze jest to, żeby Bolek był mały, zrozumiały, stabilny i łatwy do rozwijania przez ludzi oraz agentów.
+
+---
+
+## Docelowa wizja
+
+Docelowo Bolek ma być osobistym AI Operating System.
+
+Nie chodzi o kolejnego chatbota. Chodzi o agenta, który z czasem będzie potrafił:
+
+- rozumieć długoterminowy kontekst użytkownika,
+- pamiętać projekty, decyzje i wcześniejsze rozmowy,
+- pracować z repozytoriami kodu,
+- analizować błędy,
+- pisać kod,
+- uruchamiać testy,
+- tworzyć Pull Requesty,
+- monitorować deploymenty,
+- zarządzać zadaniami,
+- korzystać z dokumentów i własnej bazy wiedzy,
+- automatyzować powtarzalne procesy,
+- wybierać właściwy model AI do danego zadania,
+- korzystać z wielu narzędzi i konektorów,
+- wykonywać długotrwałe zadania krok po kroku,
+- pytać o zgodę przed ryzykownymi akcjami,
+- z czasem działać coraz bardziej autonomicznie.
+
+W skrócie: teraz prosty bot, potem agent roboczy, docelowo prywatny cyfrowy Terminator do pracy z kodem, wiedzą i infrastrukturą. Terminator w sensie metafory: skuteczny, wytrwały, pamiętający kontekst i wykonujący zadania do końca — nie zabawka i nie przypadkowy chatbot.
+
+---
+
+## Architektura docelowa
+
+Docelowo system powinien iść w tym kierunku:
+
+```text
+Kanały wejścia
+Telegram / Web / Email / Slack / Discord / Webhooks / Voice
+        ↓
+Agent Gateway
+auth, rate limit, uprawnienia, tryb pracy
+        ↓
+Agent Runtime
+sesja, stan zadania, pamięć robocza, approval, historia decyzji
+        ↓
+Planner
+dzielenie zadań na kroki, wybór narzędzi, ocena ryzyka
+        ↓
+Model Router
+Cloudflare AI / OpenAI / Claude / Gemini / DeepSeek / modele lokalne
+        ↓
+Tool Layer
+GitHub, Vercel, Cloudflare, Gmail, Drive, Browser, terminal, MCP
+        ↓
+Execution Layer
+Queues, Workflows, Durable Objects, sandbox, CI/CD
+        ↓
+Memory Layer
+D1, KV, R2, Vectorize, RAG, project memory
+        ↓
+Observability
+logi, koszty, trace, błędy, retry, audyt decyzji
 ```
 
-Piszesz do Bolka normalnym językiem. On rozumie o co chodzi, wybiera narzędzie i odpowiada. Historia rozmów jest zapisywana — Bolek pamięta poprzednie rozmowy i fakty o Tobie.
+To jest kierunek, nie obecny stan.
+
+---
+
+## Roadmapa rozwoju
+
+### Etap 0 — Bootstrap
+
+Status: obecny kierunek projektu.
+
+Cel:
+
+- bot Telegrama,
+- Cloudflare Worker,
+- podstawowe AI,
+- GitHub connector,
+- Vercel connector,
+- prosta pamięć,
+- prosty system narzędzi,
+- prosty deploy.
+
+W tym etapie nie optymalizujemy pod wielką skalę. Kod ma być możliwie prosty.
+
+---
+
+### Etap 1 — Stabilny fundament
+
+Cel: uporządkować projekt tak, żeby dało się go rozwijać przez lata.
+
+Do zrobienia:
+
+- czytelny orchestrator,
+- jasny rejestr narzędzi,
+- spójne typy,
+- dobra obsługa błędów,
+- migracje bazy,
+- bezpieczne sekrety,
+- logowanie zdarzeń,
+- tryby pracy agenta: manualny, potwierdzany, autonomiczny,
+- dokumentacja dla ludzi i agentów kodowania.
+
+Dopiero po tym etapie warto poważniej rozbudowywać pamięć i workflow.
+
+---
+
+### Etap 2 — Pamięć użytkownika i projektów
+
+Cel: Bolek zaczyna pamiętać rzeczy w sposób użyteczny.
+
+Najpierw prosto:
+
+- fakty o użytkowniku,
+- historia rozmów,
+- zadania,
+- notatki,
+- przypomnienia,
+- podstawowe streszczenia,
+- pamięć projektów.
+
+Na tym etapie nadal można obyć się bez pełnego RAG i wektorów. Jeżeli danych jest mało, D1 i dobre streszczenia wystarczą.
+
+---
+
+### Etap 3 — Więcej konektorów
+
+Cel: Bolek zaczyna działać z realnymi usługami.
+
+Priorytetowe konektory:
+
+- GitHub,
+- Vercel,
+- Cloudflare,
+- Gmail,
+- Google Drive,
+- kalendarz,
+- Notion albo Markdown,
+- monitoring/logi,
+- system zadań.
+
+Każdy konektor powinien być osobnym modułem. Nie mieszamy logiki konektorów z głównym orchestratoriem.
+
+---
+
+### Etap 4 — Pamięć semantyczna i RAG
+
+Cel: Bolek potrafi szukać po własnej wiedzy.
+
+Dopiero gdy pojawi się wystarczająco dużo danych, dokumentów, repozytoriów i notatek, warto dodać:
+
+- embeddingi,
+- Cloudflare Vectorize albo inną bazę wektorową,
+- R2 na większe pliki,
+- indeksowanie dokumentów,
+- indeksowanie repozytoriów,
+- wyszukiwanie semantyczne,
+- RAG oparty o projekty i historię użytkownika.
+
+Ważne: nie dodawać wektoryzacji tylko dlatego, że brzmi profesjonalnie. Dodać wtedy, gdy Bolek ma już co indeksować.
+
+---
+
+### Etap 5 — Workflow i zadania długotrwałe
+
+Cel: Bolek nie tylko odpowiada, ale prowadzi zadanie do końca.
+
+Wtedy wchodzą:
+
+- kolejki,
+- retry,
+- zadania opóźnione,
+- zadania cykliczne,
+- human-in-the-loop,
+- zapisywanie postępu,
+- wznawianie po błędzie,
+- raport końcowy.
+
+Technologie kandydujące:
+
+- Cloudflare Queues,
+- Cloudflare Workflows,
+- Durable Objects,
+- Cron Triggers.
+
+---
+
+### Etap 6 — Agent programistyczny
+
+Cel: Bolek realnie pomaga w kodzie.
+
+Zakres:
+
+- analiza repozytoriów,
+- czytanie plików,
+- proponowanie zmian,
+- generowanie patchy,
+- tworzenie branchy,
+- tworzenie Pull Requestów,
+- analiza CI/CD,
+- sprawdzanie deploymentów,
+- code review.
+
+Na początku Bolek może działać przez API GitHuba i Vercela. Później powinien dostać sandbox albo runner, żeby mógł uruchamiać testy i sprawdzać kod przed PR-em.
+
+---
+
+### Etap 7 — Browser automation i terminal
+
+Cel: Bolek potrafi pracować także tam, gdzie nie ma wygodnego API.
+
+Możliwości:
+
+- otwieranie stron,
+- czytanie paneli webowych,
+- screenshoty,
+- testowanie UI,
+- pobieranie dokumentów,
+- generowanie PDF,
+- automatyzacja przeglądarki,
+- bezpieczne wykonywanie komend w izolowanym środowisku.
+
+To etap późniejszy. Nie dodawać go, dopóki proste API i konektory wystarczają.
+
+---
+
+### Etap 8 — MCP i ekosystem narzędzi
+
+Cel: Bolek staje się częścią większego świata agentów.
+
+Docelowo powinien działać jako:
+
+- MCP client — korzysta z narzędzi innych systemów,
+- MCP server — udostępnia własne narzędzia innym agentom.
+
+MCP ma sens, gdy Bolek ma już stabilny własny system narzędzi. Nie powinien być wymówką do przedwczesnej komplikacji architektury.
+
+---
+
+### Etap 9 — Routing modeli AI
+
+Cel: Bolek wybiera najlepszy model do zadania.
+
+Docelowo:
+
+- tani model do prostych rozmów,
+- mocny model do planowania,
+- model kodowy do programowania,
+- model embeddingowy do pamięci,
+- model lokalny do prostych/prywatnych zadań,
+- fallback między providerami,
+- kontrola kosztów.
+
+Możliwi dostawcy:
+
+- Cloudflare Workers AI,
+- OpenAI,
+- Anthropic Claude,
+- Google Gemini,
+- DeepSeek,
+- modele open source,
+- modele lokalne.
+
+---
+
+### Etap 10 — Własne modele i własna infrastruktura
+
+Cel: Bolek zaczyna uczyć się na własnej historii.
+
+To dopiero etap po zebraniu realnych danych z użycia.
+
+Wtedy można rozważyć:
+
+- małe lokalne modele,
+- fine-tuning,
+- LoRA,
+- modele specjalistyczne,
+- własne runnery,
+- prywatny VPS,
+- serwery GPU,
+- własne środowisko wykonywania kodu.
+
+Nie trenujemy modelu, zanim nie mamy danych. Najpierw Bolek musi zebrać historię rozmów, decyzji, zadań, błędów i skutecznych workflow.
+
+---
+
+## Zasady dla agentów kodowania
+
+Jeżeli jesteś agentem AI modyfikującym to repozytorium, trzymaj się tych zasad:
+
+1. **Nie przeskakuj etapów.**
+   Jeśli projekt jest na etapie Telegram + GitHub/Vercel, nie dodawaj od razu wielkiej architektury RAG, MCP, Kubernetes albo własnego LLM.
+
+2. **Małe zmiany są lepsze niż wielkie przebudowy.**
+   Dodawaj funkcje modułowo i tak, żeby można było je łatwo usunąć lub wymienić.
+
+3. **Nie hardcoduj sekretów.**
+   Tokeny i klucze muszą iść przez Cloudflare secrets albo zmienne środowiskowe.
+
+4. **Nie mieszaj konektorów z orchestratoriem.**
+   GitHub, Vercel i kolejne integracje powinny być osobnymi narzędziami/modułami.
+
+5. **Ryzykowne akcje wymagają potwierdzenia.**
+   Commit, deploy, usuwanie danych, zmiana infrastruktury i wysyłanie wiadomości do zewnętrznych osób nie powinny dziać się przypadkiem.
+
+6. **Aktualizuj README, gdy zmieniasz etap projektu.**
+   Jeśli dodajesz realną nową warstwę, opisz ją tutaj.
+
+7. **Nie udawaj, że funkcja istnieje.**
+   W README jasno rozdzielaj: działa teraz, eksperyment, plan, wizja.
+
+8. **Projekt ma być czytelny dla następnego agenta.**
+   Kod, nazwy plików, migracje i dokumentacja mają pomagać kolejnym agentom szybko zrozumieć system.
+
+---
+
+## Jak to działa teraz
+
+Obecny podstawowy przepływ:
+
+```text
+Ty → Telegram → Cloudflare Worker → Orchestrator → AI → Tools → D1/KV
+                                                  ↓
+                                           GitHub / Vercel
+```
+
+Piszesz do Bolka na Telegramie. Worker odbiera wiadomość, przekazuje ją do orchestratora, model AI pomaga zinterpretować intencję, a system narzędzi może wykonać prostą akcję, np. związaną z GitHubem albo Vercel.
 
 ---
 
 ## Czego potrzebujesz zanim zaczniesz
 
-### 1. Konto Cloudflare (bezpłatne)
-Wejdź na https://cloudflare.com i załóż konto. Darmowy plan wystarczy — Workers AI, D1, KV i Cron Triggers są na free.
+### 1. Konto Cloudflare
 
-### 2. Bot na Telegramie (wymagane)
-- Otwórz Telegram i wyszukaj **@BotFather**
-- Wyślij `/newbot`
-- Podaj nazwę bota i username
-- Skopiuj token który dostaniesz — będzie potrzebny przy setup
+Załóż konto na Cloudflare. Darmowy plan wystarczy na start: Workers, D1, KV i podstawowe AI są dobrym fundamentem dla wersji początkowej.
 
-### 3. Node.js (wymagane)
-Wersja 18 lub nowsza: https://nodejs.org
+### 2. Bot na Telegramie
 
-### 4. GitHub Token (opcjonalne — potrzebne do zarządzania kodem)
-- Wejdź na https://github.com → kliknij swój avatar → **Settings**
-- Lewy panel → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
-- Kliknij **Generate new token (classic)**
-- Zaznacz scope: **repo** (pełny dostęp do repozytoriów)
-- Skopiuj token — zaczyna się od `ghp_...`
+- Otwórz Telegram i wyszukaj **@BotFather**.
+- Wyślij `/newbot`.
+- Podaj nazwę bota i username.
+- Skopiuj token bota.
 
-### 5. Vercel Token (opcjonalne — potrzebne do monitorowania projektów)
-- Wejdź na https://vercel.com → kliknij swój avatar → **Settings**
-- Lewy panel → **Tokens**
-- Kliknij **Create** → podaj nazwę → skopiuj token
+### 3. Node.js
 
-### 6. Anthropic API Key (opcjonalne — potrzebne do zlecania zadań kodowania)
-- Wejdź na https://console.anthropic.com
-- Lewy panel → **API Keys** → **Create Key**
-- Skopiuj klucz — zaczyna się od `sk-ant-...`
+Wymagana jest wersja 18 lub nowsza.
+
+### 4. GitHub token
+
+Opcjonalny, ale potrzebny do pracy z repozytoriami.
+
+Wymagany scope zależy od funkcji, ale dla pełnego dostępu do prywatnych repozytoriów zwykle potrzebny jest zakres `repo`.
+
+### 5. Vercel token
+
+Opcjonalny, ale potrzebny do odczytu projektów, deploymentów i logów Vercela.
+
+### 6. Anthropic/OpenAI/inne modele
+
+Na obecnym etapie dodatkowe modele są opcjonalne. System powinien być projektowany tak, żeby można było je podłączyć później bez przebudowy całego projektu.
 
 ---
 
@@ -54,287 +425,158 @@ npm install
 ./setup.sh
 ```
 
-Skrypt przeprowadzi Cię przez cały proces:
-1. Zaloguje do Cloudflare
-2. Stworzy bazę D1 i przestrzeń KV
-3. Zapyta o token Telegrama (wymagany)
-4. Zapyta o tokeny GitHub, Vercel, Anthropic (opcjonalne — Enter żeby pominąć)
-5. Wdroży Workera na Cloudflare
-6. Ustawi webhook Telegrama
+Skrypt powinien przeprowadzić przez podstawową konfigurację:
 
-Po zakończeniu napisz do swojego bota — Bolek odpowie.
+1. Logowanie do Cloudflare.
+2. Utworzenie zasobów D1/KV, jeśli są wymagane.
+3. Dodanie tokena Telegrama.
+4. Dodanie opcjonalnych tokenów GitHub/Vercel.
+5. Deploy Workera.
+6. Ustawienie webhooka Telegrama.
+
+Po zakończeniu napisz do swojego bota na Telegramie.
 
 ---
 
 ## Migracje bazy danych
 
-Baza danych D1 wymaga uruchomienia migracji — bez tego Bolek nie będzie pamiętał rozmów ani zadań.
+Baza D1 jest używana do danych trwałych, takich jak wiadomości, fakty, zadania albo inne elementy pamięci.
 
-**Przy pierwszym uruchomieniu** setup.sh robi to automatycznie.
-
-**Gdy dodajesz nowe funkcje** (nowa migracja w `src/db/migrations/`) musisz ją uruchomić ręcznie:
+Przy pierwszym uruchomieniu setup może wykonać migracje automatycznie. Przy dodawaniu kolejnych funkcji uruchamiaj migracje ręcznie:
 
 ```bash
 # Lokalne testowanie
 npm run db:migrate:local
 
-# Produkcja (Cloudflare)
+# Produkcja Cloudflare
 npm run db:migrate:remote
 ```
 
-Migracje są numerowane i stosowane po kolei — nigdy nie usuwaj starych plików migracji.
-
-**Lista migracji:**
-- `001_initial.sql` — wiadomości, zadania, notatki
-- `002_memory_reminders.sql` — fakty o właścicielu, przypomnienia
+Nie usuwaj starych migracji. Kolejni agenci muszą mieć możliwość odtworzenia pełnego stanu bazy od początku.
 
 ---
 
-## Dodanie tokenów po fakcie
+## Sekrety i zmienne środowiskowe
 
-Jeśli pominąłeś tokeny podczas setup lub chcesz je zmienić:
+Ustawianie sekretów po pierwszym setupie:
 
 ```bash
+wrangler secret put TELEGRAM_BOT_TOKEN
 wrangler secret put GITHUB_TOKEN
 wrangler secret put VERCEL_TOKEN
-wrangler secret put ANTHROPIC_API_KEY
 ```
 
-Wrangler zapyta o wartość — wklej token i Enter.
+Przykładowe zmienne:
+
+| Zmienna | Wymagana | Do czego |
+|---|---:|---|
+| `TELEGRAM_BOT_TOKEN` | tak | odbieranie i wysyłanie wiadomości przez Telegram |
+| `TELEGRAM_WEBHOOK_SECRET` | tak | zabezpieczenie webhooka |
+| `GITHUB_TOKEN` | nie | dostęp do GitHuba |
+| `VERCEL_TOKEN` | nie | dostęp do Vercela |
+| `AI_MODEL` | nie | wybór modelu AI |
+| `ANTHROPIC_API_KEY` | nie | późniejsze zadania kodowania / mocniejszy model |
+| `OPENAI_API_KEY` | nie | przyszły model router |
+
+Nigdy nie commituj wartości sekretów do repozytorium.
 
 ---
 
-## Interfejs webowy
+## Obecne możliwości
 
-```bash
-cd web
-npm install
-cp .env.local.example .env.local
-# Otwórz .env.local i wpisz URL swojego Workera
-npm run dev
-```
+Na starcie Bolek powinien być traktowany jako prosty agent komunikacyjny.
 
-Otwórz http://localhost:3000 — czat z Bolkiem w przeglądarce.
+### Telegram
 
-### Gdzie znaleźć URL Workera
-Po deploy przez setup.sh lub `npm run deploy` — URL jest wypisany w terminalu. Wygląda tak:
-```
-https://agent-bolek.<twoj-subdomain>.workers.dev
+Przykłady:
+
+```text
+"cześć Bolek"
+"co potrafisz?"
+"pomóż mi z repo"
 ```
 
-### Deploy web na Vercel
-1. Wejdź na https://vercel.com → **New Project** → importuj repo
-2. Ustaw **Root Directory** na `web`
-3. Dodaj zmienną: `NEXT_PUBLIC_BOLEK_API_URL` = URL Twojego Workera
-4. Deploy
+### GitHub
 
----
+Jeśli skonfigurowano `GITHUB_TOKEN`, Bolek może dostać pierwsze możliwości pracy z GitHubem.
 
-## Co Bolek umie
+Przykłady docelowe dla tego etapu:
 
-### Zadania
-```
-"dodaj zadanie: zadzwonić do dentysty"
-"co mam do zrobienia?"
-"oznacz zadanie 3 jako zrobione"
-```
-
-### Notatki
-```
-"zapisz notatkę: pomysł na biznes — sklep z..."
-"znajdź notatki o projekcie X"
-```
-
-### Przypomnienia
-```
-"przypomnij mi jutro o 9:00 o spotkaniu z Markiem"
-"za 2 godziny przypomnij mi wziąć leki"
-"jakie mam przypomnienia?"
-```
-Bolek sam napisze do Ciebie o wyznaczonej godzinie przez Telegram.
-
-### Pamięć o Tobie
-```
-"mam na imię Paweł, pracuję jako developer"
-"jestem alergikiem na gluten"
-"lubię kawę bez cukru"
-```
-Bolek zapamiętuje te fakty na zawsze i używa ich w każdej rozmowie.
-
-### GitHub (wymaga GITHUB_TOKEN)
-```
-"jakie mam repozytoria?"
+```text
+"pokaż moje repozytoria"
 "pokaż otwarte issues w pawelekbyra/kulfon"
-"utwórz issue: błąd logowania na mobile"
-"pokaż zawartość pliku src/index.ts w moim repo"
+"sprawdź plik README w repo kulfon"
 ```
 
-### Vercel (wymaga VERCEL_TOKEN)
-```
-"jakie mam projekty na Vercel?"
-"pokaż ostatnie deploymenty projektu kulfon"
-"sprawdź logi z ostatniego deploymentu"
-"są jakieś błędy runtime w projekcie kulfon?"
-"zrób redeploy"
-```
+### Vercel
 
-### Zadania kodowania (wymaga ANTHROPIC_API_KEY)
-```
-"napisz endpoint /health do projektu kulfon w pliku src/health.ts"
-"zrób review tego kodu: [wklej kod]"
-"dodaj obsługę błędów do funkcji fetchUser i zapisz w repo pawelekbyra/kulfon w pliku src/utils.ts"
-```
-Bolek zleca zadanie Claude AI, dostaje kod i opcjonalnie sam commituje go do repozytorium.
+Jeśli skonfigurowano `VERCEL_TOKEN`, Bolek może dostać pierwsze możliwości pracy z Vercel.
 
-### Tryb pracy agenta
+Przykłady docelowe dla tego etapu:
+
+```text
+"pokaż projekty na Vercel"
+"sprawdź ostatni deployment projektu kulfon"
+"czy ostatni deploy się udał?"
 ```
-"działaj autonomicznie"     → Bolek sam wykonuje akcje i tylko raportuje wynik
-"pytaj mnie o zgodę"        → przed każdą akcją (commit, redeploy itp.) czeka na Twoje "tak"
-"tryb manualny"             → tylko analizuje i sugeruje, nic nie wykonuje
-```
-Domyślny tryb to "pytaj o zgodę" — bezpieczny start.
 
 ---
 
 ## Struktura projektu
 
-```
+Przykładowy kierunek struktury:
+
+```text
 src/
-  index.ts            # Worker — routes + cron handler (przypomnienia)
-  env.ts              # Typy zmiennych środowiskowych
-  telegram.ts         # Obsługa wiadomości z Telegrama
-  orchestrator.ts     # Mózg Bolka — AI + wybór narzędzi + pamięć
-  memory.ts           # Historia rozmów z D1
-  agent-mode.ts       # Tryb pracy: autonomous / confirm / manual
+  index.ts              # Cloudflare Worker, webhooki, routing
+  telegram.ts           # obsługa Telegrama
+  orchestrator.ts       # główny przepływ agenta
+  memory.ts             # prosta pamięć / D1
+  env.ts                # typy środowiska
   tools/
-    index.ts          # Rejestr wszystkich narzędzi
-    tasks.ts          # Zadania
-    notes.ts          # Notatki
-    facts.ts          # Fakty o właścicielu (długoterminowa pamięć)
-    reminders.ts      # Przypomnienia z timerem
-    github.ts         # GitHub API
-    vercel.ts         # Vercel API
-    coding.ts         # Zlecanie zadań kodowania Claude AI
-  db/migrations/
-    001_initial.sql   # Wiadomości, zadania, notatki
-    002_memory_reminders.sql  # Fakty, przypomnienia
+    index.ts            # rejestr narzędzi
+    github.ts           # GitHub connector
+    vercel.ts           # Vercel connector
+  db/migrations/        # migracje D1
 
-web/                  # Interfejs webowy (Next.js)
-  app/page.tsx        # Czat w przeglądarce
-
-setup.sh              # Skrypt pierwszego uruchomienia
-wrangler.toml         # Konfiguracja Cloudflare
+web/                    # opcjonalny interfejs webowy, jeśli jest rozwijany
+setup.sh                # pierwsza konfiguracja
+wrangler.toml           # konfiguracja Cloudflare
 ```
+
+Jeżeli aktualna struktura różni się od tej listy, traktuj powyższe jako kierunek organizacyjny, nie sztywny obowiązek.
 
 ---
 
-## Jak rozwijać Bolka
+## Jak dodawać nowe narzędzie
 
-### Dodanie nowej umiejętności
+Nowe funkcje powinny trafiać do `src/tools/` albo równoważnego modułu narzędziowego.
 
-Przykład — moduł finansów:
+Zasada:
 
-**1. Utwórz `src/tools/finance.ts`:**
+1. Dodaj osobny plik narzędzia.
+2. Opisz nazwę, parametry i ryzyko akcji.
+3. Zarejestruj narzędzie w centralnym rejestrze.
+4. Jeżeli potrzeba danych trwałych, dodaj migrację.
+5. Zaktualizuj README, jeśli funkcja zmienia realny etap projektu.
 
-```typescript
-import type { ToolDefinition } from './index'
-
-export const financeTools: ToolDefinition[] = [
-  {
-    name: 'finance_add_expense',
-    description: 'Zapisz wydatek użytkownika',
-    parameters: {
-      type: 'object',
-      properties: {
-        amount:   { type: 'number', description: 'Kwota w PLN' },
-        category: { type: 'string', description: 'Kategoria np. jedzenie, transport' },
-      },
-      required: ['amount'],
-    },
-  },
-]
-
-export async function executeFinanceTool(name: string, args: unknown, db: D1Database) {
-  const a = args as { amount: number; category?: string }
-  if (name === 'finance_add_expense') {
-    await db.prepare('INSERT INTO expenses (amount, category) VALUES (?, ?)')
-      .bind(a.amount, a.category ?? null).run()
-    return { ok: true }
-  }
-}
-```
-
-**2. Zarejestruj w `src/tools/index.ts`:**
-
-```typescript
-import { financeTools, executeFinanceTool } from './finance'
-
-export const tools = [..., ...financeTools]
-
-export async function executeTool(name, args, db, chatId, env) {
-  if (name.startsWith('finance_')) return executeFinanceTool(name, args, db)
-  // ...
-}
-```
-
-**3. Dodaj migrację `src/db/migrations/003_finance.sql`:**
-
-```sql
-CREATE TABLE IF NOT EXISTS expenses (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  amount     REAL NOT NULL,
-  category   TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-**4. Uruchom migrację i deploy:**
-
-```bash
-npm run db:migrate:remote
-npm run deploy
-```
-
-Gotowe — Bolek od razu umie nową rzecz.
+Nie dopisuj dużej logiki bezpośrednio do głównego Workera, jeśli może być osobnym narzędziem.
 
 ---
 
-### Zmiana modelu AI
+## Definicja sukcesu
 
-W `wrangler.toml`:
+Bolek odniesie sukces, jeśli będzie rozwijał się stopniowo:
 
-```toml
-[vars]
-AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
-```
+1. Najpierw odpowiada na Telegramie.
+2. Potem korzysta z GitHuba i Vercela.
+3. Potem pamięta kontekst użytkownika i projektów.
+4. Potem wykonuje coraz więcej narzędzi.
+5. Potem planuje zadania.
+6. Potem prowadzi workflow do końca.
+7. Potem działa z kodem, testami i deploymentem.
+8. Potem korzysta z wielu modeli i agentów.
+9. Potem dostaje własną pamięć semantyczną, sandbox i automatyzację przeglądarki.
+10. Na końcu staje się osobistym AI Operating System.
 
-Dostępne modele Workers AI: https://developers.cloudflare.com/workers-ai/models/
-
-### Podłączenie zewnętrznego modelu (Claude, GPT)
-
-Podmień funkcję `runAI` w `src/orchestrator.ts` — reszta systemu zostaje bez zmian.
-
----
-
-## Zmienne środowiskowe — pełna lista
-
-| Zmienna | Wymagana | Skąd | Do czego |
-|---|---|---|---|
-| `TELEGRAM_BOT_TOKEN` | TAK | @BotFather na Telegramie | Odbieranie i wysyłanie wiadomości |
-| `TELEGRAM_WEBHOOK_SECRET` | TAK | Generuje setup.sh | Zabezpieczenie webhooka |
-| `GITHUB_TOKEN` | nie | github.com → Settings → Developer settings → PAT (scope: repo) | Zarządzanie repozytoriami |
-| `VERCEL_TOKEN` | nie | vercel.com → Settings → Tokens | Monitoring projektów i deploymentów |
-| `ANTHROPIC_API_KEY` | nie | console.anthropic.com → API Keys | Zlecanie zadań kodowania Claude AI |
-
-Ustawianie po fakcie:
-```bash
-wrangler secret put NAZWA_ZMIENNEJ
-```
-
----
-
-## Ten projekt nie ma końca
-
-Bolek to platforma, nie aplikacja. Każdy nowy obszar życia = nowy plik w `src/tools/`. Bez przepisywania architektury, bez limitów.
-
-Rozwijaj go razem z AI — opisz co chcesz dodać, AI napisze kod, Ty uruchamiasz dwie komendy.
+To repozytorium jest początkiem tej drogi.
