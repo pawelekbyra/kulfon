@@ -22,9 +22,16 @@ type AIResponse = {
   tool_calls?: Array<{ id: string; name: string; arguments: unknown }>
 }
 
-async function runAI(env: Env, messages: AIMessage[]): Promise<AIResponse> {
+async function runAI(env: Env, messages: AIMessage[], withTools = true): Promise<AIResponse> {
   const ai = env.AI as Ai
-  return (await (ai.run as Function)(env.AI_MODEL, { messages })) as AIResponse
+  const params: Record<string, unknown> = { messages }
+  if (withTools) {
+    params.tools = tools.map((t) => ({
+      type: 'function',
+      function: { name: t.name, description: t.description, parameters: t.parameters },
+    }))
+  }
+  return (await (ai.run as Function)(env.AI_MODEL, params)) as AIResponse
 }
 
 async function buildMessages(
@@ -61,9 +68,9 @@ async function resolveToolCalls(
 
   const second = await runAI(env, [
     ...messages,
-    { role: 'assistant', content: null, tool_calls: first.tool_calls },
+    { role: 'assistant', content: '', tool_calls: first.tool_calls },
     { role: 'tool', content: JSON.stringify(result), tool_call_id: call.id },
-  ])
+  ], false)
 
   return second.response ?? 'Gotowe.'
 }
