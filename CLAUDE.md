@@ -1,4 +1,4 @@
-# Kulfon — Personal Life Automation Agent
+# AGENT BOLEK — Personal Life Automation Agent
 
 ## What this is
 
