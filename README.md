@@ -150,6 +150,369 @@ Te elementy są ważne, ale później. Teraz najważniejsze jest to, żeby Bolek
 
 ---
 
+## Podstawowe konektory do wdrożenia
+
+Konektory są najważniejszym sposobem rozbudowy Bolka. Każdy konektor powinien być osobnym modułem z jasnym zakresem, opisem ryzyka, wymaganymi sekretami i informacją, czy akcje są tylko odczytem, czy mogą zmieniać dane.
+
+Najważniejsza zasada: **Bolek ma dostać kontrolowany warsztat pracy, a nie pełny dostęp do całego życia użytkownika**.
+
+Oznacza to:
+
+- wąskie uprawnienia zamiast pełnych scope'ów,
+- osobne foldery, etykiety i kalendarze dla Bolka,
+- tryb `read`, `draft`, `propose`, `execute`,
+- potwierdzenie użytkownika przed ryzykownymi akcjami,
+- brak automatycznego usuwania danych,
+- brak wysyłania maili, deployowania, commitowania lub udostępniania plików bez zgody.
+
+### Kolejność wdrożenia konektorów
+
+#### 1. Telegram
+
+Status: **obecny interfejs główny**.
+
+Zakres:
+
+- odbieranie wiadomości,
+- wysyłanie odpowiedzi,
+- powiadomienia,
+- proste komendy,
+- potwierdzanie akcji.
+
+Telegram pozostaje pierwszym i najprostszym kanałem sterowania Bolkiem.
+
+#### 2. GitHub Basic
+
+Status: **jeden z pierwszych konektorów**.
+
+Zakres na start:
+
+- lista repozytoriów,
+- czytanie plików,
+- czytanie issues,
+- tworzenie issues,
+- sprawdzanie README i dokumentacji,
+- później: branch, commit, Pull Request.
+
+GitHub jest kluczowy, bo Bolek ma rozumieć własne repo i docelowo pomagać w swoim rozwoju.
+
+#### 3. Vercel Basic
+
+Status: **jeden z pierwszych konektorów**.
+
+Zakres na start:
+
+- lista projektów,
+- ostatnie deploymenty,
+- status deploymentu,
+- podstawowe logi,
+- później: redeploy po zgodzie,
+- później: monitoring i alerty.
+
+#### 4. Capabilities Registry
+
+Status: **krytyczny moduł fundamentu**.
+
+Zakres:
+
+- lista tego, co Bolek umie,
+- status capability: `implemented`, `partial`, `planned`, `future`, `blocked`,
+- sprawdzanie, czy zadanie mieści się w aktualnych możliwościach,
+- aktualizacja capabilities przy dodaniu nowej funkcji.
+
+To nie jest zwykły konektor zewnętrzny, ale wewnętrzny konektor samoświadomości Bolka.
+
+#### 5. Capability Gaps
+
+Status: **krytyczny moduł fundamentu**.
+
+Zakres:
+
+- zapisywanie braków,
+- listowanie braków,
+- priorytetyzacja braków,
+- powiązanie braku z rozmową,
+- powiązanie braku z issue,
+- proponowanie następnego upgrade'u.
+
+To jest podstawa self-improvement loop.
+
+#### 6. GitHub Issues dla upgrade proposals
+
+Status: **najbezpieczniejszy pierwszy krok self-upgrade**.
+
+Zakres:
+
+- tworzenie issue z wykrytego capability gap,
+- dodawanie opisu technicznego,
+- dodawanie checklisty,
+- oznaczanie priorytetu,
+- linkowanie do rozmowy lub decyzji.
+
+Najpierw issue. Dopiero później branch i PR.
+
+#### 7. Google Drive — folder `Bolek OS`
+
+Status: **bardzo wysoki priorytet po fundamencie**.
+
+Zakres:
+
+- tworzenie i zapisywanie dokumentów,
+- raporty,
+- plany techniczne,
+- eksporty rozmów,
+- pliki do późniejszej pamięci semantycznej,
+- przestrzeń robocza Bolka.
+
+Zasada: Bolek nie powinien od razu mieć pełnego dostępu do całego Drive. Powinien zaczynać od własnego folderu i wąskich uprawnień.
+
+#### 8. Google Docs
+
+Status: **wysoki priorytet**.
+
+Zakres:
+
+- specyfikacje,
+- roadmapy,
+- decyzje architektoniczne,
+- opisy upgrade'ów,
+- raporty po zadaniach,
+- dokumentacja tworzona przez Bolka.
+
+#### 9. Google Sheets
+
+Status: **wysoki priorytet**.
+
+Zakres:
+
+- backlog,
+- capability gaps,
+- koszty modeli,
+- lista konektorów,
+- logi zadań,
+- priorytety rozwoju.
+
+Sheets może być prostą warstwą roboczą zanim wszystko trafi do D1 albo dedykowanego panelu.
+
+#### 10. Gmail Readonly + Drafts
+
+Status: **wysoki priorytet, ale ostrożnie**.
+
+Zakres na start:
+
+- wyszukiwanie maili,
+- czytanie wybranych wątków,
+- podsumowanie maili,
+- etykietowanie,
+- tworzenie draftów,
+- brak automatycznego wysyłania bez zgody,
+- brak permanentnego usuwania maili.
+
+Bolek może przygotować wiadomość, ale użytkownik powinien zatwierdzić wysyłkę.
+
+#### 11. Google Calendar
+
+Status: **wysoki priorytet**.
+
+Zakres:
+
+- sprawdzanie wolnych terminów,
+- czytanie wydarzeń,
+- tworzenie wydarzeń w kalendarzu Bolka,
+- proponowanie wydarzeń w głównym kalendarzu,
+- przypomnienia,
+- blokowanie czasu na pracę po zgodzie.
+
+#### 12. Google Tasks
+
+Status: **średni/wysoki priorytet**.
+
+Zakres:
+
+- zadania z rozmów,
+- follow-upy,
+- TODO,
+- zadania self-upgrade,
+- synchronizacja z pamięcią Bolka.
+
+#### 13. Google Contacts / People Readonly
+
+Status: **średni priorytet**.
+
+Zakres:
+
+- rozpoznawanie osób,
+- dobieranie adresata maila,
+- podstawowy kontekst kontaktów,
+- bez edycji kontaktów na start.
+
+#### 14. Cloudflare Connector
+
+Status: **wysoki priorytet systemowy**.
+
+Zakres:
+
+- status Workera,
+- podstawowe usage,
+- D1/KV/R2 status,
+- Workers AI usage,
+- później Vectorize,
+- później Queues i Workflows.
+
+Write access do Cloudflare powinien być ograniczony i wymagać potwierdzenia.
+
+#### 15. Markdown / Docs Memory
+
+Status: **bardzo wysoki priorytet**.
+
+Zakres:
+
+- czytanie README,
+- czytanie plików `.md`,
+- changelog,
+- decyzje projektowe,
+- dokumentacja repo.
+
+To jest najprostszy krok do tego, żeby Bolek rozumiał własny projekt.
+
+#### 16. Semantic Memory MVP / Vectorize
+
+Status: **wysoki priorytet, ale jako MVP**.
+
+Zakres:
+
+- indeks README,
+- indeks ważnych plików `src/`,
+- indeks decyzji projektowych,
+- indeks ważnych rozmów,
+- wyszukiwanie po pamięci,
+- pytania typu: `co wiesz o swoim kodzie?`, `gdzie jest logika X?`.
+
+Nie robić od razu wielkiego RAG. Zacząć od małego hipokampa Bolka.
+
+#### 17. Vercel Monitoring
+
+Status: **wysoki priorytet po Vercel Basic**.
+
+Zakres:
+
+- cykliczne sprawdzanie statusu deploymentów,
+- alert Telegram,
+- historia awarii,
+- powiązanie awarii z commitami.
+
+#### 18. GitHub Pull Requests
+
+Status: **później, po issue i upgrade plannerze**.
+
+Zakres:
+
+- tworzenie branchy,
+- modyfikacja plików,
+- tworzenie PR,
+- opis PR,
+- powiązanie PR z capability gap.
+
+#### 19. GitHub Actions
+
+Status: **wysoki priorytet dla agenta kodującego**.
+
+Zakres:
+
+- status CI,
+- logi workflow,
+- analiza błędów,
+- retry po zgodzie,
+- raport po testach.
+
+#### 20. Sentry / Error Monitoring
+
+Status: **średni/wysoki priorytet**.
+
+Zakres:
+
+- błędy runtime,
+- stack trace,
+- powiązanie błędu z deploymentem,
+- tworzenie issue z błędu.
+
+#### 21. Sandbox / Runner
+
+Status: **później, ale kluczowy dla self-upgrade**.
+
+Zakres:
+
+- `npm test`,
+- `npm run build`,
+- lint,
+- uruchamianie skryptów,
+- sprawdzanie patchy przed PR.
+
+Bez sandboxa Bolek może pisać kod, ale nie powinien twierdzić, że go sprawdził.
+
+#### 22. Browser Automation
+
+Status: **później**.
+
+Zakres:
+
+- otwieranie stron,
+- screenshoty,
+- pobieranie treści,
+- testy UI,
+- generowanie PDF,
+- praca z panelami bez API.
+
+#### 23. MCP
+
+Status: **docelowo ważne, ale nie jako pierwszy fundament**.
+
+Zakres:
+
+- Bolek jako MCP client,
+- Bolek jako MCP server,
+- standardowe podpinanie narzędzi agentowych.
+
+---
+
+## Minimalny zestaw Google na start
+
+Jeżeli wdrażany jest Google connector, startowy zakres powinien być ograniczony.
+
+Rekomendowany kierunek:
+
+```text
+Drive:
+- praca w folderze "Bolek OS"
+- tworzenie plików
+- odczyt plików utworzonych lub udostępnionych Bolkowi
+
+Gmail:
+- readonly
+- compose/drafts
+- labels
+- bez automatycznego wysyłania
+- bez permanentnego usuwania
+
+Calendar:
+- freebusy
+- events readonly
+- tworzenie wydarzeń po zgodzie
+- preferowany osobny kalendarz "Bolek"
+
+Contacts:
+- readonly
+
+Tasks:
+- zadania Bolka
+- follow-upy
+- self-upgrade backlog
+```
+
+Nie należy wdrażać konektora Google przez przekazanie Bolkowi hasła. Dostęp powinien iść przez OAuth, wąskie scope'y, bezpieczne przechowywanie tokenów i możliwość odłączenia konektora.
+
+---
+
 ## Docelowa wizja
 
 Docelowo Bolek ma być osobistym AI Operating System.
@@ -311,12 +674,39 @@ Priorytetowe konektory:
 - Cloudflare,
 - Gmail,
 - Google Drive,
-- kalendarz,
-- Notion albo Markdown,
+- Google Docs,
+- Google Sheets,
+- Google Calendar,
+- Google Tasks,
+- Google Contacts / People,
 - monitoring/logi,
 - system zadań.
 
 Każdy konektor powinien być osobnym modułem. Nie mieszamy logiki konektorów z głównym orchestratoriem.
+
+---
+
+### Etap 3.1 — Google Workspace Core
+
+Cel: Bolek dostaje kontrolowaną przestrzeń roboczą Google.
+
+Zakres:
+
+- folder `Bolek OS` w Google Drive,
+- Google Docs jako dokumentacja i plany,
+- Google Sheets jako backlog, capability gaps i koszty,
+- Gmail readonly + drafts,
+- Calendar freebusy + wydarzenia po zgodzie,
+- Tasks jako proste zadania,
+- Contacts readonly.
+
+Zasada:
+
+- Bolek nie dostaje pełnego dostępu do całego konta,
+- Bolek pracuje w folderach, labelkach i kalendarzach przeznaczonych dla niego,
+- wysyłanie maili, udostępnianie plików i modyfikacja głównego kalendarza wymagają zgody,
+- tokeny OAuth muszą być przechowywane bezpiecznie,
+- konektor musi dać się odłączyć.
 
 ---
 
@@ -514,6 +904,12 @@ Jeżeli jesteś agentem AI modyfikującym to repozytorium, trzymaj się tych zas
 10. **Self-upgrade ma być bezpieczny.**
     Najpierw plan albo issue, potem branch/PR, potem testy, potem zgoda użytkownika. Nigdy odwrotnie.
 
+11. **Konektory mają mieć minimalne uprawnienia.**
+    Każdy konektor powinien zaczynać od najmniejszych możliwych scope'ów i dopiero później rozszerzać dostęp, jeśli jest realna potrzeba.
+
+12. **Google ma być warsztatem Bolka, nie pełnym dostępem do konta.**
+    Preferuj folder `Bolek OS`, labelki Gmaila, osobny kalendarz i drafty zamiast pełnego dostępu do całego konta.
+
 ---
 
 ## Jak to działa teraz
@@ -559,7 +955,19 @@ Wymagany scope zależy od funkcji, ale dla pełnego dostępu do prywatnych repoz
 
 Opcjonalny, ale potrzebny do odczytu projektów, deploymentów i logów Vercela.
 
-### 6. Anthropic/OpenAI/inne modele
+### 6. Google OAuth
+
+Opcjonalny, ale docelowo ważny dla Google Workspace Core.
+
+Na start Google powinien być wdrażany jako kontrolowana przestrzeń robocza Bolka:
+
+- folder `Bolek OS` w Drive,
+- Gmail readonly + drafts,
+- Calendar z potwierdzeniem zmian,
+- Sheets dla backlogu i capability gaps,
+- Docs dla dokumentacji.
+
+### 7. Anthropic/OpenAI/inne modele
 
 Na obecnym etapie dodatkowe modele są opcjonalne. System powinien być projektowany tak, żeby można było je podłączyć później bez przebudowy całego projektu.
 
@@ -621,11 +1029,14 @@ Przykładowe zmienne:
 | `TELEGRAM_WEBHOOK_SECRET` | tak | zabezpieczenie webhooka |
 | `GITHUB_TOKEN` | nie | dostęp do GitHuba |
 | `VERCEL_TOKEN` | nie | dostęp do Vercela |
+| `GOOGLE_CLIENT_ID` | nie | Google OAuth |
+| `GOOGLE_CLIENT_SECRET` | nie | Google OAuth |
+| `GOOGLE_REDIRECT_URI` | nie | callback OAuth |
 | `AI_MODEL` | nie | wybór modelu AI |
 | `ANTHROPIC_API_KEY` | nie | późniejsze zadania kodowania / mocniejszy model |
 | `OPENAI_API_KEY` | nie | przyszły model router |
 
-Nigdy nie commituj wartości sekretów do repozytorium.
+Nigdy nie commituj wartości sekretów do repozytorium. Tokeny OAuth użytkownika powinny być przechowywane bezpiecznie, najlepiej zaszyfrowane.
 
 ---
 
@@ -683,6 +1094,19 @@ Przykłady docelowe dla tego etapu:
 "czy ostatni deploy się udał?"
 ```
 
+### Google Workspace
+
+Na obecnym etapie Google Workspace jest planowanym konektorem, a nie obowiązkowym fundamentem.
+
+Przykłady docelowe dla pierwszej wersji:
+
+```text
+"utwórz dokument z planem upgrade'u w Bolek OS"
+"zapisz ten capability gap w arkuszu"
+"przygotuj draft maila, ale go nie wysyłaj"
+"sprawdź, kiedy mam wolny czas jutro"
+```
+
 ---
 
 ## Struktura projektu
@@ -701,6 +1125,9 @@ src/
     index.ts            # rejestr narzędzi
     github.ts           # GitHub connector
     vercel.ts           # Vercel connector
+    google-drive.ts     # przyszły Google Drive connector
+    google-gmail.ts     # przyszły Gmail connector
+    google-calendar.ts  # przyszły Calendar connector
     capability-gaps.ts  # narzędzia do zapisywania i listowania braków
   db/migrations/        # migracje D1
 
@@ -737,14 +1164,15 @@ Bolek odniesie sukces, jeśli będzie rozwijał się stopniowo:
 1. Najpierw odpowiada na Telegramie.
 2. Potem korzysta z GitHuba i Vercela.
 3. Potem rozumie, czego jeszcze nie umie, i proponuje upgrade'y.
-4. Potem pamięta kontekst użytkownika i projektów.
-5. Potem wykonuje coraz więcej narzędzi.
-6. Potem planuje zadania.
-7. Potem prowadzi workflow do końca.
-8. Potem działa z kodem, testami i deploymentem.
-9. Potem sam przygotowuje issue, branch i Pull Request dla własnych ulepszeń.
-10. Potem korzysta z wielu modeli i agentów.
-11. Potem dostaje własną pamięć semantyczną, sandbox i automatyzację przeglądarki.
-12. Na końcu staje się osobistym AI Operating System.
+4. Potem dostaje kontrolowany warsztat Google Workspace.
+5. Potem pamięta kontekst użytkownika i projektów.
+6. Potem wykonuje coraz więcej narzędzi.
+7. Potem planuje zadania.
+8. Potem prowadzi workflow do końca.
+9. Potem działa z kodem, testami i deploymentem.
+10. Potem sam przygotowuje issue, branch i Pull Request dla własnych ulepszeń.
+11. Potem korzysta z wielu modeli i agentów.
+12. Potem dostaje własną pamięć semantyczną, sandbox i automatyzację przeglądarki.
+13. Na końcu staje się osobistym AI Operating System.
 
 To repozytorium jest początkiem tej drogi.
